@@ -1,10 +1,12 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import appleLogo from "../../assets/apple.svg";
 import facebookLogo from "../../assets/facebook.svg";
 import googleLogo from "../../assets/google.svg";
 import loginGo from "../../assets/login-go.png";
+import { toastError } from "../../helpers/errorHandling";
 import { LoginRequest, useLoginMutation } from "../../services/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 function LoginFrame() {
   const [login, { isLoading }] = useLoginMutation();
@@ -24,7 +26,7 @@ function LoginFrame() {
       e.preventDefault();
       await login(formState).unwrap();
     } catch (err) {
-      console.log(err);
+      toastError(err);
     }
   };
 
@@ -50,7 +52,9 @@ function LoginFrame() {
         <div className="flex gap-4 mb-8">
           <button className="flex-1 btn btn-base bg-blue-100 text-blue-500 border-none normal-case font-normal">
             <img src={googleLogo} alt="google logo" width={26} height={26} />
-            Sign in with Google
+
+            <span className="hidden min-[420px]:inline">Sign in</span>
+            <span className="-ml-1 hidden min-[380px]:inline">with Google</span>
           </button>
           <button className="btn btn-base">
             <img
@@ -85,7 +89,7 @@ function LoginFrame() {
             <input
               onChange={handleChange}
               name="password"
-              type="text"
+              type="password"
               placeholder="Password"
               className="input input-bordered"
             />
@@ -101,6 +105,9 @@ function LoginFrame() {
           <div className="form-control mt-6">
             <button type="submit" className="btn btn-primary normal-case">
               Sign in
+              {isLoading && (
+                <span className="loading loading-spinner loading-sm"></span>
+              )}
             </button>
           </div>
         </form>
@@ -118,6 +125,11 @@ function Nav() {
 }
 
 export default function Login() {
+  const user = useAuth();
+  const location = useLocation();
+
+  if (user.user) return <Navigate to="/" state={{ from: location }} />;
+
   return (
     <>
       <div className="h-full grid grid-rows-[1fr_1fr] absolute w-full -z-10">
@@ -126,8 +138,8 @@ export default function Login() {
         </div>
       </div>
 
-      <div className="grid grid-cols-[1fr_1fr] h-full">
-        <div className="h-full grid grid-rows-[1fr_1fr] relative">
+      <div className="p-4 sm:p-0 grid grid-cols-[1fr] md:grid-cols-[1fr_1fr] h-full">
+        <div className="h-full overflow-hidden hidden md:grid grid-rows-[1fr_1fr] relative">
           <div className="flex">
             <article className="prose p-14 pr-2 self-center max-w-[65%] text-white">
               <h2 className="text-white font-medium mb-0">Sign in to</h2>

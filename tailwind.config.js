@@ -13,6 +13,12 @@ export default {
           ...require("daisyui/src/theming/themes")["[data-theme=cmyk]"],
           primary: "#0089ED",
           "primary-content": "white",
+          "@media only screen and (max-width: 850px)": {
+            ".btn": {
+              "padding-left": "0.75rem",
+              "padding-right": "0.75rem",
+            },
+          },
         },
       },
     ],

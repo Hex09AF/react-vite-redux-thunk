@@ -3,8 +3,7 @@ import { RootState } from "../app/store";
 import env from "../configs/environment";
 
 export interface User {
-  first_name: string;
-  last_name: string;
+  username: string;
 }
 
 export interface UserResponse {
