@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:wght@400;500;600;700;800;900&display=swap");
+
+html {
+  box-sizing: border-box;
+  font-size: 16px;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+ol,
+ul {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+
+ol,
+ul {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+html,
+#root,
+.scroll-c {
+  height: 100%;
+}
+
+.scroll-c {
+  position: relative;
+}
+
+.number-c {
+  height: 50px;
+  > div {
+    position: absolute;
+  }
+}
+
+.title-c {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 5.5555555556vw 0 0 5.5555555556vw;
+  width: 50.6944444444vw;
+  height: 100vh;
+  h1 {
+    font-family: "Sofia Sans Extra Condensed", sans-serif;
+    padding-bottom: 4vw;
+    font-size: 6.8vw;
+    line-height: 1;
+    text-transform: uppercase;
+    font-weight: 900;
+  }
+  background: linear-gradient(to right, #fff8e3 70%, transparent);
+}
+
+.article-c {
+  position: fixed;
+  transform: matrix(0.89, 0.19, -0.57, 0.97, 0, 0);
+
+  left: 25.3vw;
+  top: 8.3vw;
+}
+
+.article-w {
+  display: flex;
+
+  article {
+    background-color: #fff8e3;
+    padding: 2.2222222222vw 1.6666666667vw;
+    width: 26.0416666667vw;
+    margin-bottom: 1.0416666667vw;
+    margin-right: 1.1111111111vw;
+    h1,
+    h2 {
+      text-transform: uppercase;
+    }
+  }
+}
