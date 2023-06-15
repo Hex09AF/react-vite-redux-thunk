@@ -4,7 +4,6 @@ import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { store, persistor } from "./app/store.ts";
 import ErrorPage from "./error-page.tsx";
-import Login from "./features/login/Login.tsx";
 import "./index.css";
 import Root from "./routes/Root.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
@@ -21,14 +20,27 @@ const router = createBrowserRouter([
         element: <PrivateRoute />,
         children: [
           {
-            path: "/",
-            element: <div>Hello</div>,
+            path: "/travel",
+            children: [
+              {
+                path: "/travel/create",
+                async lazy() {
+                  const { default: TravelCreate } = await import(
+                    "./features/travel/Create.tsx"
+                  );
+                  return { element: <TravelCreate /> };
+                },
+              },
+            ],
           },
         ],
       },
       {
         path: "/login",
-        element: <Login />,
+        async lazy() {
+          const { default: Login } = await import("./features/login/Login.tsx");
+          return { element: <Login /> };
+        },
       },
     ],
   },
