@@ -48,7 +48,15 @@ function LoginFrame() {
 	};
 
 	return (
-		<Card w="100%" maxW="md" alignSelf="center" m="auto" borderRadius="3xl" boxShadow="2xl">
+		<Card
+			px={{ sm: 4 }}
+			w="100%"
+			maxW="md"
+			alignSelf="center"
+			m="auto"
+			borderRadius="3xl"
+			boxShadow="2xl"
+		>
 			<CardBody>
 				<Flex justify="space-between">
 					<Box>
@@ -137,6 +145,7 @@ function LoginFrame() {
 							isLoading={isSubmitting}
 							loadingText="Submitting"
 							type="submit"
+							mb={{ sm: 8 }}
 						>
 							Sign in
 						</Button>
