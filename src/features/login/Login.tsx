@@ -1,168 +1,197 @@
-import { FormEvent, useState } from "react";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import {
+	Box,
+	Button,
+	Card,
+	CardBody,
+	Flex,
+	FormControl,
+	FormErrorMessage,
+	FormLabel,
+	Grid,
+	Heading,
+	Img,
+	Input,
+	Link,
+	Stack,
+	Text,
+} from "@chakra-ui/react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { Navigate, Link as RouterLink, useLocation } from "react-router-dom";
 import appleLogo from "../../assets/apple.svg";
 import facebookLogo from "../../assets/facebook.svg";
 import googleLogo from "../../assets/google.svg";
 import loginGo from "../../assets/login-go.png";
 import { toastError } from "../../helpers/errorHandling";
-import { LoginRequest, useLoginMutation } from "../../services/auth";
 import { useAuth } from "../../hooks/useAuth";
+import { useLoginMutation } from "../../services/auth";
+
+type Inputs = {
+	email: string;
+	password: string;
+};
 
 function LoginFrame() {
-  const [login, { isLoading }] = useLoginMutation();
+	const {
+		register,
+		handleSubmit,
+		formState: { errors, isSubmitting },
+	} = useForm<Inputs>();
 
-  const [formState, setFormState] = useState<LoginRequest>({
-    email: "",
-    password: "",
-  });
+	const [login] = useLoginMutation();
 
-  const handleChange = ({
-    target: { name, value },
-  }: React.ChangeEvent<HTMLInputElement>) =>
-    setFormState((prev) => ({ ...prev, [name]: value }));
+	const onSubmit: SubmitHandler<Inputs> = async (data) => {
+		try {
+			await login(data).unwrap();
+		} catch (err) {
+			toastError(err);
+		}
+	};
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    try {
-      e.preventDefault();
-      await login(formState).unwrap();
-    } catch (err) {
-      toastError(err);
-    }
-  };
+	return (
+		<Card w="100%" maxW="md" alignSelf="center" m="auto" borderRadius="3xl" boxShadow="2xl">
+			<CardBody>
+				<Flex justify="space-between">
+					<Box>
+						Welcome to{" "}
+						<Text as="strong" textTransform="uppercase" color="blue.400">
+							Lorem
+						</Text>
+					</Box>
+					<Box as="small">
+						<Text color="gray.500">No account ?</Text>
+						<Link color="blue.400" display="block" as={RouterLink} to="/signup">
+							Sign up
+						</Link>
+					</Box>
+				</Flex>
 
-  return (
-    <div className="card w-full max-w-md shadow-2xl bg-base-100 self-center m-auto">
-      <div className="card-body">
-        <div className="flex justify-between">
-          <div>
-            Welcome to <span className="text-primary uppercase">Lorem</span>
-          </div>
-          <div className="label-text-alt">
-            <div className="text-slate-400">No account ?</div>
-            <Link to="/signup" className="link link-hover link-primary">
-              Sign up
-            </Link>
-          </div>
-        </div>
+				<Heading as="h1" mb="12">
+					Sign in
+				</Heading>
 
-        <div className="card-title prose mb-10">
-          <h1>Sign in!</h1>
-        </div>
+				<Flex gap={4} mb={8}>
+					<Button flex={1} fontWeight="normal" color="blue.400">
+						<Img mr={2} src={googleLogo} alt="google logo" width={26} height={26} />
 
-        <div className="flex gap-4 mb-8">
-          <button className="flex-1 btn btn-base bg-blue-100 text-blue-500 border-none normal-case font-normal">
-            <img src={googleLogo} alt="google logo" width={26} height={26} />
+						<Text>Sign in</Text>
+						<Text ml={1} display={{ base: "none", sm: "inline" }}>
+							with Google
+						</Text>
+					</Button>
 
-            <span className="hidden min-[420px]:inline">Sign in</span>
-            <span className="-ml-1 hidden min-[380px]:inline">with Google</span>
-          </button>
-          <button className="btn btn-base">
-            <img
-              src={facebookLogo}
-              alt="facebook logo"
-              width={26}
-              height={26}
-            />
-          </button>
-          <button className="btn btn-base">
-            <img src={appleLogo} alt="apple logo" width={26} height={26} />
-          </button>
-        </div>
+					<Button>
+						<Img src={facebookLogo} alt="facebook logo" width={26} height={26} />
+					</Button>
+					<Button>
+						<Img src={appleLogo} alt="apple logo" width={26} height={26} />
+					</Button>
+				</Flex>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-control mb-4">
-            <label className="label">
-              <span className="label-text">Enter your Email address</span>
-            </label>
-            <input
-              onChange={handleChange}
-              name="email"
-              type="text"
-              placeholder="Email address"
-              className="input input-bordered"
-            />
-          </div>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Enter your Password</span>
-            </label>
-            <input
-              onChange={handleChange}
-              name="password"
-              type="password"
-              placeholder="Password"
-              className="input input-bordered"
-            />
-            <label className="label justify-end">
-              <Link
-                to="/forgot"
-                className="label-text-alt link link-primary link-hover"
-              >
-                Forgot password?
-              </Link>
-            </label>
-          </div>
-          <div className="form-control mt-6">
-            <button type="submit" className="btn btn-primary normal-case">
-              Sign in
-              {isLoading && (
-                <span className="loading loading-spinner loading-sm"></span>
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-}
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<FormControl mb={8} isInvalid={!!errors.email}>
+						<FormLabel htmlFor="email">Enter your Email address</FormLabel>
+						<Input
+							id="email"
+							placeholder="Email address"
+							{...register("email", {
+								required: "This is required",
+								minLength: { value: 4, message: "Minimum length should be 4" },
+							})}
+						/>
+						<FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
+					</FormControl>
 
-function Nav() {
-  return (
-    <div className="navbar bg-primary">
-      <div>daisyUI</div>
-    </div>
-  );
+					<FormControl mb={3} isInvalid={!!errors.password}>
+						<FormLabel htmlFor="password">Enter your Password</FormLabel>
+						<Input
+							id="password"
+							placeholder="Password"
+							{...register("password", {
+								required: "This is required",
+								minLength: { value: 4, message: "Minimum length should be 4" },
+							})}
+						/>
+						<FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
+					</FormControl>
+
+					<Stack>
+						<Link
+							mb={8}
+							alignSelf="flex-end"
+							fontSize="sm"
+							as={RouterLink}
+							to="/forgot"
+							color={"blue.400"}
+						>
+							Forgot password?
+						</Link>
+
+						<Button
+							fontSize="md"
+							shadow="lg"
+							color="white"
+							fontWeight="normal"
+							size="lg"
+							colorScheme="blue"
+							backgroundColor="blue.400"
+							isLoading={isSubmitting}
+							loadingText="Submitting"
+							type="submit"
+						>
+							Sign in
+						</Button>
+					</Stack>
+				</form>
+			</CardBody>
+		</Card>
+	);
 }
 
 export default function Login() {
-  const user = useAuth();
-  const location = useLocation();
+	const user = useAuth();
+	const location = useLocation();
 
-  if (user.user) return <Navigate to="/" state={{ from: location }} />;
+	if (user.user) return <Navigate to="/" state={{ from: location }} />;
 
-  return (
-    <>
-      <div className="h-full grid grid-rows-[1fr_1fr] absolute w-full -z-10">
-        <div className="bg-primary h-full">
-          <Nav />
-        </div>
-      </div>
+	return (
+		<>
+			<Grid templateRows="repeat(2, 1fr)" position="absolute" w="100%" h="100%" zIndex={-10}>
+				<Box h="100%" bg="blue.400" />
+			</Grid>
 
-      <div className="p-4 sm:p-0 grid grid-cols-[1fr] md:grid-cols-[1fr_1fr] h-full">
-        <div className="h-full overflow-hidden hidden md:grid grid-rows-[1fr_1fr] relative">
-          <div className="flex">
-            <article className="prose p-14 pr-2 self-center max-w-[65%] text-white">
-              <h2 className="text-white font-medium mb-0">Sign in to</h2>
-              <h3 className="text-white font-normal">Lorem Ipsum is simply</h3>
-              <p className="font-thin">
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry. Lorem Ipsum has been the industry's standard dummy
-                text ever since the 1500s
-              </p>
-            </article>
-            <div className="flex align-middle absolute -right-[5%] -z-10">
-              <img
-                height={300}
-                width={300}
-                className="object-contain"
-                alt="login go"
-                src={loginGo}
-              />
-            </div>
-          </div>
-        </div>
-        <LoginFrame />
-      </div>
-    </>
-  );
+			<Grid
+				gridTemplateColumns={{ base: "repeat(1, 1fr)", md: "repeat(2, 1fr)" }}
+				p={{ base: 4, sm: 0 }}
+				h="100%"
+			>
+				<Grid
+					templateRows="repeat(2, 1fr)"
+					h="100%"
+					overflow="hidden"
+					display={{ base: "none", md: "grid" }}
+					position="relative"
+				>
+					<Flex className="flex">
+						<Box p={14} pr={2} alignSelf="center" maxW="65%" color="white">
+							<Heading as="h2" fontWeight="semibold">
+								Sign in to
+							</Heading>
+							<Heading mt={2} fontSize="xl" as="h3" fontWeight="medium">
+								Lorem Ipsum is simply
+							</Heading>
+							<Text as="p" fontWeight="normal" mt={4}>
+								Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
+								Ipsum has been the industry's standard dummy text ever since the 1500s
+							</Text>
+						</Box>
+						<Flex align="middle" alignItems="middle" right="-5%" zIndex={-10}>
+							<Img height={300} width={300} objectFit="contain" alt="login go" src={loginGo} />
+						</Flex>
+					</Flex>
+				</Grid>
+
+				<LoginFrame />
+			</Grid>
+		</>
+	);
 }

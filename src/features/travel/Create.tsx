@@ -1,58 +1,53 @@
-import { useForm, SubmitHandler } from 'react-hook-form';
-import Input from '../../components/Input';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { FormErrorMessage, FormLabel, FormControl, Input, Button, Box } from '@chakra-ui/react';
 
 type Inputs = {
 	example: string;
-	exampleRequired: string;
+	name: string;
 };
 
 export default function TravelCreate() {
 	const {
 		register,
 		handleSubmit,
-		watch,
-		formState: { errors },
+		formState: { errors, isSubmitting },
 	} = useForm<Inputs>();
 
 	const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
 
 	return (
-		<div className="py-12">
-			<div className="mt-8 max-w-md">
-				<div className="grid grid-cols-1 gap-6">
-					<h2 className="text-2xl font-bold">Create travel</h2>
-					<form onSubmit={handleSubmit(onSubmit)}>
-						{/* register your input into the hook by invoking the "register" function */}
-						<label className="block">
-							<Input type="text" {...register('example')} />
-						</label>
+		<Box p={4}>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<FormControl isInvalid={!!errors.example}>
+					<FormLabel htmlFor="example">First example</FormLabel>
+					<Input
+						id="example"
+						placeholder="example"
+						{...register('example', {
+							required: 'This is required',
+							minLength: { value: 4, message: 'Minimum length should be 4' },
+						})}
+					/>
+					<FormErrorMessage>{errors.example && errors.example.message}</FormErrorMessage>
+				</FormControl>
 
-						{/* include validation with required or other standard HTML validation rules */}
-						<label className="block">
-							<input
-								type="text"
-								className="
-                mt-1
-                block
-                w-full
-                rounded-md
-                border-gray-300
-                shadow-sm
-                focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50
-              "
-								{...register('exampleRequired', { required: true })}
-							/>
-						</label>
+				<FormControl isInvalid={!!errors.example}>
+					<FormLabel htmlFor="name">First name</FormLabel>
+					<Input
+						id="name"
+						placeholder="name"
+						{...register('name', {
+							required: 'This is required',
+							minLength: { value: 4, message: 'Minimum length should be 4' },
+						})}
+					/>
+					<FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
+				</FormControl>
 
-						{/* errors will return when field validation fails  */}
-						{errors.exampleRequired && <span>This field is required</span>}
-
-						<button type="submit" className="btn-primary btn">
-							Submit
-						</button>
-					</form>
-				</div>
-			</div>
-		</div>
+				<Button mt={4} colorScheme="teal" isLoading={isSubmitting} type="submit">
+					Submit
+				</Button>
+			</form>
+		</Box>
 	);
 }

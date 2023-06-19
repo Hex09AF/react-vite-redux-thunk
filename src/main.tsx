@@ -8,50 +8,52 @@ import "./index.css";
 import Root from "./routes/Root.tsx";
 import PrivateRoute from "./routes/PrivateRoute.tsx";
 import { PersistGate } from "redux-persist/integration/react";
+import { ChakraProvider } from "@chakra-ui/react";
+import theme from "./configs/theme.ts";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "/",
-        // element: <PrivateRoute />,
-        children: [
-          {
-            path: "/travel",
-            children: [
-              {
-                path: "/travel/create",
-                async lazy() {
-                  const { default: TravelCreate } = await import(
-                    "./features/travel/Create.tsx"
-                  );
-                  return { element: <TravelCreate /> };
-                },
-              },
-            ],
-          },
-        ],
-      },
-      {
-        path: "/login",
-        async lazy() {
-          const { default: Login } = await import("./features/login/Login.tsx");
-          return { element: <Login /> };
-        },
-      },
-    ],
-  },
+	{
+		path: "/",
+		element: <Root />,
+		errorElement: <ErrorPage />,
+		children: [
+			{
+				path: "/",
+				// element: <PrivateRoute />,
+				children: [
+					{
+						path: "/travel",
+						children: [
+							{
+								path: "/travel/create",
+								async lazy() {
+									const { default: TravelCreate } = await import("./features/travel/Create.tsx");
+									return { element: <TravelCreate /> };
+								},
+							},
+						],
+					},
+				],
+			},
+			{
+				path: "/login",
+				async lazy() {
+					const { default: Login } = await import("./features/login/Login.tsx");
+					return { element: <Login /> };
+				},
+			},
+		],
+	},
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <RouterProvider router={router} />
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>
+	<React.StrictMode>
+		<ChakraProvider theme={theme}>
+			<Provider store={store}>
+				<PersistGate loading={null} persistor={persistor}>
+					<RouterProvider router={router} />
+				</PersistGate>
+			</Provider>
+		</ChakraProvider>
+	</React.StrictMode>
 );
