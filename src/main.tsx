@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -10,6 +9,7 @@ import PrivateRoute from "./routes/PrivateRoute.tsx";
 import { PersistGate } from "redux-persist/integration/react";
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "./configs/theme.ts";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const router = createBrowserRouter([
 	{
@@ -47,13 +47,13 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-	<React.StrictMode>
-		<ChakraProvider theme={theme}>
-			<Provider store={store}>
-				<PersistGate loading={null} persistor={persistor}>
-					<RouterProvider router={router} />
-				</PersistGate>
-			</Provider>
-		</ChakraProvider>
-	</React.StrictMode>
+	// <React.StrictMode>
+	<ChakraProvider theme={theme}>
+		<Provider store={store}>
+			<PersistGate loading={null} persistor={persistor}>
+				<RouterProvider router={router} />
+			</PersistGate>
+		</Provider>
+	</ChakraProvider>
+	// </React.StrictMode>
 );
