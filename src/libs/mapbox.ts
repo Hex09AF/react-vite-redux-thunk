@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
+import env from "../configs/environment";
 
-mapboxgl.accessToken =
-	"pk.eyJ1IjoidGhpZXVuaGkxMDIiLCJhIjoiY2xodWttYzBpMDByazNkbGJxNDd2M2Z4bSJ9.wKrLppvFEIkfoCSDdiGBMg";
+mapboxgl.accessToken = env.MAP_TOKEN;
 
 export default mapboxgl;

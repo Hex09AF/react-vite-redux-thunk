@@ -10,6 +10,8 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import mapboxgl from "../../libs/mapbox";
+import { useLazyReverseQuery } from "../../services/geo";
+import env from "../../configs/environment";
 
 type Inputs = {
 	example: string;
@@ -19,12 +21,13 @@ type Inputs = {
 export default function TravelCreate() {
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const map = useRef<mapboxgl.Map>();
-	const [lng, setLng] = useState(-70.9);
-	const [lat, setLat] = useState(42.35);
-	const [zoom, setZoom] = useState(9);
+	const [lng, setLng] = useState(107.57);
+	const [lat, setLat] = useState(16.45);
+	const [zoom, setZoom] = useState(12);
 	const [travelIndex, setTravelIndex] = useState(0);
 	const markers = useRef<Array<mapboxgl.Marker>>([]);
-
+	const [reverse, result] = useLazyReverseQuery();
+	console.log(result);
 	const {
 		register,
 		handleSubmit,
@@ -49,9 +52,9 @@ export default function TravelCreate() {
 		const makeMarker = (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
 			if (!map.current) return;
 
-			console.log(e);
-
 			if (markers.current[travelIndex]) markers.current[travelIndex].remove();
+
+			reverse(`/${e.lngLat.lng},${e.lngLat.lat}.json?access_token=${env.MAP_TOKEN}`);
 
 			markers.current[travelIndex] = new mapboxgl.Marker()
 				.setLngLat([e.lngLat.lng, e.lngLat.lat])
