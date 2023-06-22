@@ -12,6 +12,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import mapboxgl from "../../libs/mapbox";
 import { useLazyReverseQuery } from "../../services/geo";
 import env from "../../configs/environment";
+import MyDropzone from "../../components/Dropzone";
 
 type Inputs = {
 	example: string;
@@ -73,7 +74,7 @@ export default function TravelCreate() {
 	return (
 		<Grid p={4} templateColumns="repeat(2, 1fr)">
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<FormControl isInvalid={!!errors.example}>
+				<FormControl isInvalid={!!errors.example} mb="4">
 					<FormLabel htmlFor="example">First example</FormLabel>
 					<Input
 						id="example"
@@ -86,7 +87,7 @@ export default function TravelCreate() {
 					<FormErrorMessage>{errors.example && errors.example.message}</FormErrorMessage>
 				</FormControl>
 
-				<FormControl isInvalid={!!errors.example}>
+				<FormControl isInvalid={!!errors.example} mb="4">
 					<FormLabel htmlFor="name">First name</FormLabel>
 					<Input
 						id="name"
@@ -97,6 +98,11 @@ export default function TravelCreate() {
 						})}
 					/>
 					<FormErrorMessage>{errors.name && errors.name.message}</FormErrorMessage>
+				</FormControl>
+
+				<FormControl>
+					<FormLabel htmlFor="name">Gallary</FormLabel>
+					<MyDropzone />
 				</FormControl>
 
 				<Button mt={4} colorScheme="teal" isLoading={isSubmitting} type="submit">
