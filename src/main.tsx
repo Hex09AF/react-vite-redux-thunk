@@ -22,6 +22,15 @@ const router = createBrowserRouter([
 				// element: <PrivateRoute />,
 				children: [
 					{
+						path: "/",
+						async lazy() {
+							const { default: LandingRive } = await import(
+								"./features/landing-rive/LandingRive.tsx"
+							);
+							return { element: <LandingRive /> };
+						},
+					},
+					{
 						path: "/travel",
 						children: [
 							{
