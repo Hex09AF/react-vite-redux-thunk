@@ -1,20 +1,28 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
-export default function MyDropzone() {
-	const [files, setFiles] = useState<{ preview: string }[]>([]);
+interface PreviewFile extends File {
+	preview: string;
+}
 
-	const onDrop = useCallback((acceptedFiles: File[]) => {
-		console.log(acceptedFiles);
-		setFiles(
-			acceptedFiles.map((file) =>
-				Object.assign(file, {
-					preview: URL.createObjectURL(file),
-				})
-			)
-		);
-	}, []);
+export default function MyDropzone({ onChange }: { onChange: (files: File[]) => void }) {
+	const [files, setFiles] = useState<PreviewFile[]>([]);
+
+	const onDrop = useCallback(
+		(acceptedFiles: File[]) => {
+			console.log("acceptedFiles", acceptedFiles);
+			setFiles(
+				acceptedFiles.map((file) =>
+					Object.assign(file, {
+						preview: URL.createObjectURL(file),
+					})
+				)
+			);
+			onChange(acceptedFiles);
+		},
+		[onChange]
+	);
 
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		accept: {

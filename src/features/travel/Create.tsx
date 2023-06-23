@@ -8,7 +8,7 @@ import {
 	Input,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import mapboxgl from "../../libs/mapbox";
 import { useLazyReverseQuery } from "../../services/geo";
 import env from "../../configs/environment";
@@ -17,6 +17,7 @@ import MyDropzone from "../../components/Dropzone";
 type Inputs = {
 	example: string;
 	name: string;
+	file: File;
 };
 
 export default function TravelCreate() {
@@ -28,10 +29,11 @@ export default function TravelCreate() {
 	const [travelIndex, setTravelIndex] = useState(0);
 	const markers = useRef<Array<mapboxgl.Marker>>([]);
 	const [reverse, result] = useLazyReverseQuery();
-	console.log(result);
+
 	const {
 		register,
 		handleSubmit,
+		control,
 		formState: { errors, isSubmitting },
 	} = useForm<Inputs>();
 
@@ -69,7 +71,7 @@ export default function TravelCreate() {
 
 			map.current.off("click", makeMarker);
 		};
-	}, [map, travelIndex]);
+	}, [map, travelIndex, reverse]);
 
 	return (
 		<Grid p={4} templateColumns="repeat(2, 1fr)">
@@ -102,7 +104,11 @@ export default function TravelCreate() {
 
 				<FormControl>
 					<FormLabel htmlFor="name">Gallary</FormLabel>
-					<MyDropzone />
+					<Controller
+						render={({ field }) => <MyDropzone onChange={(files) => field.onChange(files?.[0])} />}
+						name="file"
+						control={control}
+					/>
 				</FormControl>
 
 				<Button mt={4} colorScheme="teal" isLoading={isSubmitting} type="submit">
