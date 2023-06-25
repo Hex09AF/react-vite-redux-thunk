@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const reverseApi = createApi({
+	reducerPath: "api/map",
 	baseQuery: fetchBaseQuery({
 		baseUrl: "https://api.mapbox.com/geocoding/v5/mapbox.places",
 	}),

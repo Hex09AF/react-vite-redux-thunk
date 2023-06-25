@@ -13,8 +13,15 @@ import mapboxgl from "../../libs/mapbox";
 import { useLazyReverseQuery } from "../../services/geo";
 import env from "../../configs/environment";
 import MyDropzone from "../../components/Dropzone";
-import { useCreateTravelMutation } from "../../services/travel";
+import {
+	CreateRequest,
+	Travel,
+	useCreateTravelMutation,
+	useGetDetailTravelQuery,
+	useUpdateTravelMutation,
+} from "../../services/travel";
 import { toastError } from "../../helpers/errorHandling";
+import { useParams } from "react-router-dom";
 
 type Inputs = {
 	title: string;
@@ -22,7 +29,10 @@ type Inputs = {
 	file: File;
 };
 
-export default function TravelCreate() {
+export default function TravelEdit() {
+	const { travelId } = useParams();
+	const { data } = useGetDetailTravelQuery(travelId as string);
+
 	const mapContainer = useRef<HTMLDivElement>(null);
 	const map = useRef<mapboxgl.Map>();
 	const [lng, setLng] = useState(107.57);
@@ -31,23 +41,24 @@ export default function TravelCreate() {
 	const [travelIndex, setTravelIndex] = useState(0);
 	const markers = useRef<Array<mapboxgl.Marker>>([]);
 	const [reverse, result] = useLazyReverseQuery();
-	const [create] = useCreateTravelMutation();
+	const [update] = useUpdateTravelMutation();
 
 	const {
 		register,
 		handleSubmit,
+		setValue,
 		control,
 		formState: { errors, isSubmitting },
 	} = useForm<Inputs>();
 
 	const onSubmit: SubmitHandler<Inputs> = async (data) => {
 		try {
-			const formData = new FormData();
-
-			for (const name in data) {
-				formData.append(name, data[name as keyof typeof data]);
+			const filterData: Partial<CreateRequest> &
+				Record<string, CreateRequest[keyof CreateRequest]> = {};
+			for (const [key, value] of Object.entries(data)) {
+				if (value) filterData[key] = value;
 			}
-			await create(formData).unwrap();
+			await update({ id: travelId as string, data: filterData }).unwrap();
 		} catch (err) {
 			toastError(err);
 		}
@@ -86,6 +97,13 @@ export default function TravelCreate() {
 			map.current.off("click", makeMarker);
 		};
 	}, [map, travelIndex, reverse]);
+
+	useEffect(() => {
+		if (data) {
+			setValue("title", data.title);
+			setValue("content", data.content || "");
+		}
+	}, [data, setValue]);
 
 	return (
 		<Grid p={4} templateColumns="repeat(2, 1fr)">

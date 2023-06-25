@@ -3,43 +3,41 @@ import { RootState } from "../app/store";
 import env from "../configs/environment";
 
 export interface User {
-  username: string;
+	username: string;
 }
 
 export interface UserResponse {
-  user: User;
-  token: string;
+	user: User;
+	token: string;
 }
 
 export interface LoginRequest {
-  email: string;
-  password: string;
+	email: string;
+	password: string;
 }
 
 export const api = createApi({
-  baseQuery: fetchBaseQuery({
-    baseUrl: env.BASE_API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      // By default, if we have a token in the store, let's use that for authenticated requests
-      const token = (getState() as RootState).auth.token;
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
-  endpoints: (builder) => ({
-    login: builder.mutation<UserResponse, LoginRequest>({
-      query: (credentials) => ({
-        url: "/auth/login",
-        method: "POST",
-        body: credentials,
-      }),
-    }),
-    protected: builder.mutation<{ message: string }, void>({
-      query: () => "protected",
-    }),
-  }),
+	reducerPath: "api/auth",
+	baseQuery: fetchBaseQuery({
+		baseUrl: env.BASE_API_URL,
+		prepareHeaders: (headers, { getState }) => {
+			// By default, if we have a token in the store, let's use that for authenticated requests
+			const token = (getState() as RootState).auth.token;
+			if (token) {
+				headers.set("authorization", `Bearer ${token}`);
+			}
+			return headers;
+		},
+	}),
+	endpoints: (builder) => ({
+		login: builder.mutation<UserResponse, LoginRequest>({
+			query: (credentials) => ({
+				url: "/auth/login",
+				method: "POST",
+				body: credentials,
+			}),
+		}),
+	}),
 });
 
-export const { useLoginMutation, useProtectedMutation } = api;
+export const { useLoginMutation } = api;

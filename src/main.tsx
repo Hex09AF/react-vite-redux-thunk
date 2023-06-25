@@ -19,7 +19,7 @@ const router = createBrowserRouter([
 		children: [
 			{
 				path: "/",
-				// element: <PrivateRoute />,
+				element: <PrivateRoute />,
 				children: [
 					{
 						path: "/",
@@ -34,10 +34,24 @@ const router = createBrowserRouter([
 						path: "/travel",
 						children: [
 							{
+								path: "/travel",
+								async lazy() {
+									const { default: Travel } = await import("./features/travel/Travel.tsx");
+									return { element: <Travel /> };
+								},
+							},
+							{
 								path: "/travel/create",
 								async lazy() {
 									const { default: TravelCreate } = await import("./features/travel/Create.tsx");
 									return { element: <TravelCreate /> };
+								},
+							},
+							{
+								path: "/travel/:travelId/edit",
+								async lazy() {
+									const { default: TravelEdit } = await import("./features/travel/Edit.tsx");
+									return { element: <TravelEdit /> };
 								},
 							},
 						],

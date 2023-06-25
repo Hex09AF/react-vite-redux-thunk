@@ -13,8 +13,10 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { reverseApi } from "../services/geo";
+import { travelApi } from "../services/travel";
 
 const rootReducer = combineReducers({
+	[travelApi.reducerPath]: travelApi.reducer,
 	[api.reducerPath]: api.reducer,
 	[reverseApi.reducerPath]: reverseApi.reducer,
 	auth: authReducer,
@@ -35,9 +37,7 @@ export const store = configureStore({
 			serializableCheck: {
 				ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
 			},
-		})
-			.concat(api.middleware)
-			.concat(reverseApi.middleware),
+		}).concat([api.middleware, reverseApi.middleware, travelApi.middleware]),
 });
 
 export const persistor = persistStore(store);
